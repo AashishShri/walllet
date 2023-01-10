@@ -37,11 +37,23 @@
         <button type="button" (click)='creditDebit()' class="btn btn-primary">Submit</button>
       </form>
     </div>
+    <div class="col-md-4" *ngIf="showTransaction">
+      <form>
+        <div class="form-group">
+          <label for="exampleInputUsername">Wallet Name</label>
+          <input type="text"  disabled="true" [(ngModel)]="name" class="form-control" name="name">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputbalance">Balance</label>
+          <input type="text" disabled="true" [(ngModel)]="balance"  class="form-control" name="balance">
+        </div>
+      </form>
+    </div>
   </div>
 
 
   <div class="container mt-5" *ngIf="showTransaction">
-    <button (click)="saveDataInCSV1('simpleData',transactions)">Save simple data array</button>
+    <button (click)="saveDataInCSV1('highLevel',transactions)">Export CSV</button>
   <table class="table table-striped">
     <thead>
         <tr>
@@ -56,7 +68,12 @@
         </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let transaction of transactions; let i = index">
+      <tr *ngFor="let transaction of transactions | paginate
+      : {
+          itemsPerPage: itemsPerPage,
+          currentPage: page,
+          totalItems: totalItems
+        }; let i = index">
         <td>{{i + 1}}</td>
         <td>{{ transaction._id }}</td>
         <td>{{ transaction.walletId }}</td>
@@ -64,10 +81,14 @@
         <td>{{ transaction.balance }}</td>
         <td>{{ transaction.description }}</td>
         <td>{{ transaction.type }}</td>
-        <td>{{ transaction.date }}</td>
+        <td>{{ transaction.date.toString()| date : 'dd-MM-yyyy hh:mm'}}</td>
       </tr>
     </tbody>
   </table>
 </div>
+<pagination-controls
+  class="pagi"
+  (pageChange)="gty((page = $event ),transactions[0].walletId)"
+></pagination-controls>
 
 </div>
